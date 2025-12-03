@@ -1,0 +1,36 @@
+{
+    "manifest_version": 3,
+    "name": "H&B Real Estate Scraper",
+    "version": "1.0",
+    "description": "Extracts real estate listing information from ImmoScout24 and saves it as JSON.",
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "downloads",
+        "storage"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "logo.png",
+            "48": "logo.png",
+            "128": "logo.png"
+        }
+    },
+    "icons": {
+        "16": "logo.png",
+        "48": "logo.png",
+        "128": "logo.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.immoscout24.ch/*",
+                "https://www.homegate.ch/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}

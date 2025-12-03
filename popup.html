@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>H&B Listing Scraper</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 380px;
+            min-height: 500px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: transparent;
+            color: #333;
+            overflow: hidden;
+        }
+
+        .app-wrapper {
+            background: #f9fafb;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 0 8px #f9fafb;
+        }
+
+        .header {
+            background: #fff;
+            padding: 20px;
+            border-bottom: 2px solid #ffe843;
+            text-align: center;
+        }
+
+        .logo {
+            max-width: 60px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin: 0;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #fff;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #ffe843;
+            box-shadow: 0 0 0 3px rgba(255, 232, 67, 0.1);
+        }
+
+        input::placeholder {
+            color: #9ca3af;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #ffe843;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background-color: #e6cf3a;
+        }
+
+        .btn-primary:active {
+            background-color: #cdb832;
+        }
+
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .btn-small {
+            width: auto;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .user-greeting {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .select-wrapper {
+            display: flex;
+            gap: 8px;
+        }
+
+        .select-wrapper select {
+            flex: 1;
+        }
+
+        .select-wrapper button {
+            width: 40px;
+            padding: 10px;
+            background: #f3f4f6;
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .select-wrapper button:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        #status {
+            margin: 15px 20px 20px 20px;
+            padding: 10px;
+            font-size: 13px;
+            text-align: center;
+            border-radius: 8px;
+            display: none;
+        }
+
+        #status.show {
+            display: block;
+        }
+
+        #status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        #status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        #status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 20px 0;
+        }
+
+        .hint {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 4px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-wrapper">
+        <div class="header">
+            <img src="logo.png" alt="H&B Logo" class="logo">
+            <h2>Listing Scraper</h2>
+        </div>
+
+        <div id="login-container" class="container">
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="your.email@example.com" required />
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="••••••••" required />
+        </div>
+        <div class="form-group">
+            <label for="backendUrl">Backend URL</label>
+            <input type="text" id="backendUrl" placeholder="http://localhost:5000" />
+            <div class="hint">For production use: https://your-app.herokuapp.com</div>
+        </div>
+        <button id="loginBtn" class="btn-primary">Login</button>
+    </div>
+
+    <div id="main-container" class="container" style="display: none;">
+        <div class="header-row">
+            <span class="user-greeting">
+                <span id="user-greeting"></span>
+            </span>
+            <button id="logoutBtn" class="btn-small btn-secondary">Logout</button>
+        </div>
+
+        <div class="form-group">
+            <label for="projectSelect">Select Project *</label>
+            <div class="select-wrapper">
+                <select id="projectSelect">
+                    <option value="">Loading projects...</option>
+                </select>
+                <button id="refreshProjectsBtn" title="Refresh projects">&#8635;</button>
+            </div>
+            <div class="hint">Required: Select a project before pushing</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <button id="scrapeBtn" class="btn-secondary">Scrape &amp; Download JSON</button>
+        <button id="pushBtn" class="btn-success">Push to Project</button>
+    </div>
+
+    <div id="status"></div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>
