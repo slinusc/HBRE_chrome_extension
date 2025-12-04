@@ -182,6 +182,10 @@ function scrapeImmoScout() {
 
                 // Only add if we have both URL and filename, and URL contains .pdf
                 if (url && filename && url.match(/\.pdf($|\?)/i)) {
+                    // Ensure filename has .pdf extension
+                    if (!filename.toLowerCase().endsWith('.pdf')) {
+                        filename = filename + '.pdf';
+                    }
                     data.documents.push({ url, filename });
                 }
             });
@@ -337,6 +341,10 @@ function scrapeHomegate() {
 
                 // Only add if we have both URL and filename, and URL contains .pdf
                 if (url && filename && url.match(/\.pdf($|\?)/i)) {
+                    // Ensure filename has .pdf extension
+                    if (!filename.toLowerCase().endsWith('.pdf')) {
+                        filename = filename + '.pdf';
+                    }
                     data.documents.push({ url, filename });
                 }
             });

@@ -10,14 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const userGreeting = document.getElementById('user-greeting');
     const projectSelect = document.getElementById('projectSelect');
     const refreshProjectsBtn = document.getElementById('refreshProjectsBtn');
-    const scrapeBtn = document.getElementById('scrapeBtn');
     const pushBtn = document.getElementById('pushBtn');
     const statusDiv = document.getElementById('status');
 
     // State
     let currentUser = null;
     let authToken = null;
-    let backendUrl = 'http://localhost:5000'; // Default
+    let backendUrl = 'https://your-app-url.com'; // Default - users should update this
 
     // Load settings and state
     chrome.storage.local.get(['lastBackendUrl', 'user', 'authToken', 'lastProjectId'], function (result) {
@@ -117,7 +116,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    logoutBtn.addEventListener('click', () => {
+    logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         chrome.storage.local.remove(['user', 'authToken']);
         currentUser = null;
         authToken = null;
@@ -172,22 +172,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Scraping & Pushing ---
 
-    const handleAction = async (actionType) => {
+    const handleAction = async () => {
         const projectId = projectSelect.value;
 
-        // Validate project selection for push action
-        if (actionType === 'push' && !projectId) {
-            setStatus('Error: Please select a project first', 'error');
+        // Validate project selection
+        if (!projectId) {
+            setStatus('Please select a project first', 'error');
             return;
         }
 
-        setStatus('Scraping...', '');
+        setStatus('Loading listing data...', 'info');
 
         try {
             const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
             if (!tab.url.includes('immoscout24.ch') && !tab.url.includes('homegate.ch')) {
-                setStatus('Error: Not a supported real estate page', 'error');
+                setStatus('Please open a property listing on ImmoScout24 or Homegate', 'error');
                 return;
             }
 
@@ -224,67 +224,43 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (response && response.data) {
                 const listingData = response.data;
-                listingData.project_id = projectId || null;
+                listingData.project_id = projectId;
 
-                if (actionType === 'download') {
-                    // Create JSON blob
-                    listingData._id = { "$oid": "generated_oid_" + Date.now() }; // Placeholder
-                    const jsonStr = JSON.stringify([listingData], null, 2);
-                    const blob = new Blob([jsonStr], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
+                setStatus('Adding listing to project...', 'info');
+                const endpoint = `${backendUrl}/api/extension/add-listing`;
 
-                    // Download
-                    const filename = `listing_${listingData.listing_id || 'unknown'}.json`;
-
-                    chrome.downloads.download({
-                        url: url,
-                        filename: filename,
-                        saveAs: true
-                    }, (downloadId) => {
-                        if (chrome.runtime.lastError) {
-                            setStatus('Download failed: ' + chrome.runtime.lastError.message, 'error');
-                        } else {
-                            setStatus('Success! Saved to Downloads.', 'success');
-                        }
+                try {
+                    const res = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': authToken
+                        },
+                        body: JSON.stringify(listingData)
                     });
-                } else if (actionType === 'push') {
-                    setStatus('Pushing to backend...', '');
-                    const endpoint = `${backendUrl}/api/extension/add-listing`;
 
-                    try {
-                        const res = await fetch(endpoint, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': authToken
-                            },
-                            body: JSON.stringify(listingData)
-                        });
-
-                        if (res.ok) {
-                            const result = await res.json();
-                            if (result.success) {
-                                setStatus('Success! Pushed to project.', 'success');
-                            } else {
-                                setStatus('Error: ' + (result.error || 'Unknown error'), 'error');
-                            }
+                    if (res.ok) {
+                        const result = await res.json();
+                        if (result.success) {
+                            setStatus('✓ Listing successfully added to project!', 'success');
                         } else {
-                            const errData = await res.json();
-                            setStatus(`Error: Backend returned ${res.status} - ${errData.error || 'Unknown error'}`, 'error');
+                            setStatus('Error: ' + (result.error || 'Unknown error'), 'error');
                         }
-                    } catch (fetchErr) {
-                        setStatus('Error: Failed to connect to backend. ' + fetchErr.message, 'error');
+                    } else {
+                        const errData = await res.json();
+                        setStatus(`Error: ${errData.error || 'Unknown error'}`, 'error');
                     }
+                } catch (fetchErr) {
+                    setStatus('Error: Could not connect to H&B Tool. Check your URL.', 'error');
                 }
 
             } else {
-                setStatus('Error: No data found', 'error');
+                setStatus('Error: Could not extract listing data', 'error');
             }
         } catch (err) {
             setStatus('Error: ' + err.message, 'error');
         }
     };
 
-    scrapeBtn.addEventListener('click', () => handleAction('download'));
-    pushBtn.addEventListener('click', () => handleAction('push'));
+    pushBtn.addEventListener('click', handleAction);
 });

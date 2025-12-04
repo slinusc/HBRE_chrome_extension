@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>H&B Listing Scraper</title>
+    <title>H&B Property Assistant</title>
     <link rel="icon" type="image/png" href="logo.png">
     <style>
         * {
@@ -14,52 +14,74 @@
 
         html,
         body {
-            width: 380px;
-            min-height: 500px;
+            width: 100%;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background: transparent;
+            background: #f9fafb;
             color: #333;
-            overflow: hidden;
+            overflow-y: auto;
         }
 
         .app-wrapper {
             background: #f9fafb;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 0 0 8px #f9fafb;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .header {
             background: #fff;
-            padding: 20px;
-            border-bottom: 2px solid #ffe843;
+            padding: 24px 20px;
+            border-bottom: 3px solid #ffe843;
             text-align: center;
         }
 
         .logo {
-            max-width: 60px;
+            max-width: 80px;
             height: auto;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .header h2 {
-            font-size: 16px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 18px;
             font-weight: bold;
             color: #333;
             margin: 0;
         }
 
         .container {
-            padding: 20px;
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .content-top {
+            flex: 0 0 auto;
+        }
+
+        .content-spacer {
+            flex: 1 1 auto;
+        }
+
+        .content-bottom {
+            flex: 0 0 auto;
+            margin-top: auto;
+            padding-bottom: 8px;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
             margin-bottom: 6px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: 13px;
             font-weight: 600;
             color: #6b7280;
@@ -72,7 +94,7 @@
         input[type="text"],
         select {
             width: 100%;
-            padding: 10px 14px;
+            padding: 12px 14px;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: 14px;
             border: 1px solid #d1d5db;
@@ -95,9 +117,9 @@
 
         button {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
             border: none;
             border-radius: 8px;
@@ -121,7 +143,6 @@
         .btn-success {
             background-color: #10b981;
             color: white;
-            margin-top: 10px;
         }
 
         .btn-success:hover {
@@ -144,19 +165,32 @@
             font-size: 12px;
         }
 
-        .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
         .user-greeting {
-            font-size: 14px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 15px;
             font-weight: 600;
             color: #111827;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .logout-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            padding-top: 0;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            color: #6b7280;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .logout-link:hover {
+            color: #374151;
+            text-decoration: underline;
         }
 
         .select-wrapper {
@@ -169,8 +203,8 @@
         }
 
         .select-wrapper button {
-            width: 40px;
-            padding: 10px;
+            width: 44px;
+            padding: 12px;
             background: #f3f4f6;
             color: #6b7280;
             font-size: 16px;
@@ -182,9 +216,10 @@
         }
 
         #status {
-            margin: 15px 20px 20px 20px;
-            padding: 10px;
-            font-size: 13px;
+            margin: 0 0 16px 0;
+            padding: 12px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
             text-align: center;
             border-radius: 8px;
             display: none;
@@ -219,6 +254,7 @@
         }
 
         .hint {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: 11px;
             color: #9ca3af;
             margin-top: 4px;
@@ -231,52 +267,59 @@
     <div class="app-wrapper">
         <div class="header">
             <img src="logo.png" alt="H&B Logo" class="logo">
-            <h2>Listing Scraper</h2>
+            <h2>Property Assistant</h2>
         </div>
 
         <div id="login-container" class="container">
-        <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" placeholder="your.email@example.com" required />
+        <div class="content-top">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="your.email@example.com" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••" required />
+            </div>
+            <div class="form-group">
+                <label for="backendUrl">H&B Tool URL</label>
+                <input type="text" id="backendUrl" placeholder="https://your-app-url.com" />
+                <div class="hint">Enter the URL of your H&B Tenant Rep Tool</div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="••••••••" required />
+
+        <div class="content-spacer"></div>
+
+        <div class="content-bottom">
+            <div id="status"></div>
+            <button id="loginBtn" class="btn-primary">Login</button>
         </div>
-        <div class="form-group">
-            <label for="backendUrl">Backend URL</label>
-            <input type="text" id="backendUrl" placeholder="http://localhost:5000" />
-            <div class="hint">For production use: https://your-app.herokuapp.com</div>
-        </div>
-        <button id="loginBtn" class="btn-primary">Login</button>
     </div>
 
     <div id="main-container" class="container" style="display: none;">
-        <div class="header-row">
-            <span class="user-greeting">
-                <span id="user-greeting"></span>
-            </span>
-            <button id="logoutBtn" class="btn-small btn-secondary">Logout</button>
-        </div>
-
-        <div class="form-group">
-            <label for="projectSelect">Select Project *</label>
-            <div class="select-wrapper">
-                <select id="projectSelect">
-                    <option value="">Loading projects...</option>
-                </select>
-                <button id="refreshProjectsBtn" title="Refresh projects">&#8635;</button>
+        <div class="content-top">
+            <div class="user-greeting">
+                Welcome, <span id="user-greeting"></span>
             </div>
-            <div class="hint">Required: Select a project before pushing</div>
+
+            <div class="form-group">
+                <label for="projectSelect">Project</label>
+                <div class="select-wrapper">
+                    <select id="projectSelect">
+                        <option value="">Loading projects...</option>
+                    </select>
+                    <button id="refreshProjectsBtn" title="Refresh projects">&#8635;</button>
+                </div>
+                <div class="hint">Select which project to add this listing to</div>
+            </div>
         </div>
 
-        <div class="divider"></div>
+        <div class="content-spacer"></div>
 
-        <button id="scrapeBtn" class="btn-secondary">Scrape &amp; Download JSON</button>
-        <button id="pushBtn" class="btn-success">Push to Project</button>
+        <div class="content-bottom">
+            <button id="pushBtn" class="btn-success">Add Listing to Project</button>
+            <a href="#" id="logoutBtn" class="logout-link">Logout</a>
+        </div>
     </div>
-
-    <div id="status"></div>
     </div>
 
     <script src="popup.js"></script>

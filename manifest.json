@@ -1,21 +1,26 @@
 {
     "manifest_version": 3,
-    "name": "H&B Real Estate Scraper",
+    "name": "H&B Property Assistant",
     "version": "1.0",
-    "description": "Extracts real estate listing information from ImmoScout24 and saves it as JSON.",
+    "description": "Add property listings from ImmoScout24 and Homegate directly to your H&B projects.",
     "permissions": [
         "activeTab",
         "scripting",
-        "downloads",
-        "storage"
+        "storage",
+        "sidePanel"
     ],
+    "background": {
+        "service_worker": "background.js"
+    },
     "action": {
-        "default_popup": "popup.html",
         "default_icon": {
             "16": "logo.png",
             "48": "logo.png",
             "128": "logo.png"
         }
+    },
+    "side_panel": {
+        "default_path": "popup.html"
     },
     "icons": {
         "16": "logo.png",
