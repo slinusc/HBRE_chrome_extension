@@ -89,7 +89,9 @@ function scrapeImmoScout() {
                 data.main_attributes[key] = value;
 
                 if (key.includes('Nutzfläche')) {
-                    data.usable_space = value.replace(/[^0-9]/g, '');
+                    // Extract only the first number to avoid including "2" from "m²"
+                    const match = value.match(/(\d+)/);
+                    data.usable_space = match ? match[1] : '';
                 }
             }
         }
@@ -238,7 +240,9 @@ function scrapeHomegate() {
     // 6. Usable Space
     const spaceEl = document.querySelector('[class*="SpotlightAttributesUsableSpace_value"]');
     if (spaceEl) {
-        data.usable_space = spaceEl.innerText.replace(/[^0-9]/g, '');
+        // Extract only the first number to avoid including "2" from "m²"
+        const match = spaceEl.innerText.match(/(\d+)/);
+        data.usable_space = match ? match[1] : '';
     }
 
     // 7. Features

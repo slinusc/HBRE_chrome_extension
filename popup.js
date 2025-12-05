@@ -243,6 +243,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         const result = await res.json();
                         if (result.success) {
                             setStatus('✓ Listing successfully added to project!', 'success');
+                            // Clear success message after 3 seconds
+                            setTimeout(() => {
+                                setStatus('', '');
+                            }, 3000);
                         } else {
                             setStatus('Error: ' + (result.error || 'Unknown error'), 'error');
                         }
