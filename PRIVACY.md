@@ -30,5 +30,3 @@ H&B Property Assistant is an internal productivity tool for H&B Real Estate prof
 - Users can log out at any time to clear stored authentication tokens
 - Users control which H&B backend URL the extension connects to
 
-## Contact
-For questions about this privacy policy, contact your H&B Real Estate administrator.
